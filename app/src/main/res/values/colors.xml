@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--colors_indigo-->
+    <color name="indigo_primary">#3F51B5</color>
+    <color name="indigo_primary_dark">#303F9F</color>
+    <color name="indigo_primary_light">#C5CAE9</color>
+    <color name="indigo_accent">#536DFE</color>
+    <color name="indigo_primary_text">#212121</color>
+    <color name="indigo_secondary_text">#727272</color>
+    <color name="indigo_icons">#FFFFFF</color>
+    <color name="indigo_divider">#B6B6B6</color>
+
+    <!--teal-->
+    <color name="teal_primary">#009688</color>
+    <color name="teal_primary_dark">#00796B</color>
+    <color name="teal_primary_light">#B2DFDB</color>
+    <color name="teal_accent">#009688</color>
+    <color name="teal_primary_text">#212121</color>
+    <color name="teal_secondary_text">#727272</color>
+    <color name="teal_icons">#FFFFFF</color>
+    <color name="teal_divider">#B6B6B6</color>
+    <!--blue-->
+    <color name="blue_primary">#2196F3</color>
+    <color name="blue_primary_dark">#1976D2</color>
+    <color name="blue_primary_light">#BBDEFB</color>
+    <color name="blue_accent">#009688</color>
+    <color name="blue_primary_text">#212121</color>
+    <color name="blue_secondary_text">#727272</color>
+    <color name="blue_icons">#FFFFFF</color>
+    <color name="blue_divider">#B6B6B6</color>
+
+</resources>

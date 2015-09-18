@@ -1,0 +1,22 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.administrator.bluetoothdemo.ServiceListActivity" >
+
+    <item
+        android:id="@+id/connect_indicator"
+        android:orderInCategory="2"
+        android:showAsAction="ifRoom"
+        android:title="">
+    </item>
+    <item
+        android:id="@+id/action_connect"
+        android:title="connect"
+        android:orderInCategory="3"
+        android:showAsAction="always" />
+    <item
+        android:id="@+id/action_disconnect"
+        android:title="disconnect"
+        android:orderInCategory="4"
+        android:showAsAction="always" />
+</menu>

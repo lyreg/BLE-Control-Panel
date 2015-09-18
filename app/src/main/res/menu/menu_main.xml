@@ -1,0 +1,29 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".MainActivity">
+
+    <item
+        android:id="@+id/scanning_indicator"
+        android:orderInCategory="2"
+        android:showAsAction="ifRoom"
+        android:title="">
+    </item>
+    <item
+        android:id="@+id/scanning_start"
+        android:orderInCategory="3"
+        android:showAsAction="always|withText"
+        android:title="Scan">
+    </item>
+    <item
+        android:id="@+id/scanning_stop"
+        android:orderInCategory="4"
+        android:showAsAction="always|withText"
+        android:title="Stop">
+    </item>
+    <!--<item-->
+        <!--android:id="@+id/action_settings"-->
+        <!--android:title="@string/action_settings"-->
+        <!--android:orderInCategory="100"-->
+        <!--app:showAsAction="never" />-->
+</menu>

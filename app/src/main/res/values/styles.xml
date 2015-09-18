@@ -1,0 +1,21 @@
+<resources>
+
+     Base application theme.
+    <style name="AppTheme" parent="android:Theme.Material.Light.DarkActionBar">
+        <item name="android:actionBarStyle">@style/bt_actionbar_style</item>
+        <item name="android:statusBarColor">@color/indigo_primary_dark</item>
+        <!--<item name="android:actionOverflowButtonStyle">@style/bt_actionbar_overflow_style</item>-->
+    </style>
+
+    <style name="bt_actionbar_style">
+        <item name="android:background">@color/indigo_primary</item>
+        <item name="android:titleTextStyle">@style/bt_actionbar_titleStyle</item>
+        <item name="android:displayOptions">showTitle|useLogo</item>
+        <item name="android:elevation">8dp</item>
+    </style>
+
+    <style name="bt_actionbar_titleStyle">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">#FFFFFF</item>
+    </style>
+</resources>
