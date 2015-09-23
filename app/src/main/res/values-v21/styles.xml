@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="AppTheme.Material" parent="android:Theme.Material"></style>
+    <style name="AppTheme.Base" parent="Theme.AppCompat.NoActionBar">
+
+        <item name="android:windowNoTitle">true</item>
+
+        <!-- Actionbar color -->
+        <item name="colorPrimary">@color/indigo_primary</item>
+        <!--Status bar color-->
+        <item name="colorPrimaryDark">@color/indigo_primary_dark</item>
+        <!--Window color-->
+        <item name="android:windowBackground">@color/indigo_icons</item>
+
+        <item name="android:navigationBarColor">@color/indigo_primary</item>
+    </style>
 </resources>

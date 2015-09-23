@@ -8,13 +8,16 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.le.ScanResult;
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListView;
-import android.widget.TableLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.administrator.bluetoothdemo.adapter.ServiceListExpandableAdapter;
 import com.example.administrator.bluetoothdemo.wrapper.BLEWrapperUICallBack;
@@ -22,10 +25,12 @@ import com.example.administrator.bluetoothdemo.wrapper.BLEWrapper;
 
 import java.util.List;
 
-public class ServiceListActivity extends Activity implements BLEWrapperUICallBack {
+public class ServiceListActivity extends AppCompatActivity implements BLEWrapperUICallBack {
 
     public static final String EXTRAS_DEVICE = "BLE_DEVICE";
 
+    private Toolbar mToolbar;
+    private CollapsingToolbarLayout mCollapsingToolbarLayout;
     private BLEWrapper mBleWrapper = null;
 
     private ActionBar mAcitonBar;
@@ -49,9 +54,13 @@ public class ServiceListActivity extends Activity implements BLEWrapperUICallBac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_service_layout);
-        mAcitonBar = getActionBar();
-        mAcitonBar.setDisplayHomeAsUpEnabled(true);
-        setTitle("ServiceList");
+//        setContentView(R.layout.activity_service);
+//        mAcitonBar = getActionBar();
+        mToolbar = (Toolbar) findViewById(R.id.activity_service_toolbar);
+//        mCollapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar_layout);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        setTitle("ServiceList");
 
         mListView = (ExpandableListView) findViewById(R.id.serviceListView);
 
@@ -62,6 +71,11 @@ public class ServiceListActivity extends Activity implements BLEWrapperUICallBac
         mDeviceAddress = (TextView) headerView.findViewById(R.id.servicelist_deviceAddress);
         mDeviceRssi = (TextView) headerView.findViewById(R.id.servicelist_deviceRssi);
         mConnectStatus = (TextView) headerView.findViewById(R.id.servicelist_deviceStatus);
+
+//        mDeviceName = (TextView) findViewById(R.id.servicelist_deviceName);
+//        mDeviceAddress = (TextView) findViewById(R.id.servicelist_deviceAddress);
+//        mDeviceRssi = (TextView) findViewById(R.id.servicelist_deviceRssi);
+//        mConnectStatus = (TextView) findViewById(R.id.servicelist_deviceStatus);
 
         mScanResult = getIntent().getParcelableExtra(EXTRAS_DEVICE);
 
@@ -218,6 +232,37 @@ public class ServiceListActivity extends Activity implements BLEWrapperUICallBac
 
                 mListAdapter.newCharacteristicValueFomat(ch, value);
                 mListAdapter.notifyDataSetChanged();
+            }
+        });
+    }
+
+    @Override
+    public void uiOpenLoadingForReadOrWriteValue(final String title) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+//                if(mSnackBar == null) {
+//                    mSnackBar = new SnackBar(ServiceListActivity.this, title);
+//                    mSnackBar.show();
+//                } else {
+//                    mSnackBar.setTitle(title);
+//                   // mSnackBar.show();
+//                }
+                Toast.makeText(ServiceListActivity.this, title, Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    @Override
+    public void uiCloseLoadingForReadOrWriteValue() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+//                if(mSnackBar != null) {
+//                    mSnackBar.hide();
+//                    mSnackBar.dismiss();
+//                    mSnackBar = null;
+//                }
             }
         });
     }

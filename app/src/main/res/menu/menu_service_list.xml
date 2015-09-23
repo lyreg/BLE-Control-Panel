@@ -6,17 +6,17 @@
     <item
         android:id="@+id/connect_indicator"
         android:orderInCategory="2"
-        android:showAsAction="ifRoom"
+        app:showAsAction="ifRoom"
         android:title="">
     </item>
     <item
         android:id="@+id/action_connect"
         android:title="connect"
         android:orderInCategory="3"
-        android:showAsAction="always" />
+        app:showAsAction="always" />
     <item
         android:id="@+id/action_disconnect"
         android:title="disconnect"
         android:orderInCategory="4"
-        android:showAsAction="always" />
+        app:showAsAction="always" />
 </menu>

@@ -142,6 +142,7 @@ public class SlideMenuView extends HorizontalScrollView {
         } else {
             //Log.v("onInterceptTouchEvent", scrollx + " "+ ev.getX() +" " +mMenuWidth);
             return super.onInterceptTouchEvent(ev);
+//            return onTouchEvent(ev);
         }
 
         //return false;

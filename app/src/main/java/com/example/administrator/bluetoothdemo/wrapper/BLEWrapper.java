@@ -42,11 +42,13 @@ public class BLEWrapper {
     private String mBluetoothAddress = null;
     private List<BluetoothGattService> mBluetoothGattServices = null;
     private boolean mConnected = false;
+    private boolean mScanning;
 
     public BLEWrapper(Activity parent, BLEWrapperUICallBack callBack) {
         mActivity = parent;
         mCallBack = callBack;
         mHandler = new Handler();
+        mScanning = false;
         if(callBack == null) mCallBack = DEFOUT_CALLBACK;
     }
 
@@ -103,11 +105,13 @@ public class BLEWrapper {
      */
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public void startScanning() {
+        mScanning = true;
         mBluetoothLeSanner = mBluetoothAdapter.getBluetoothLeScanner();
         if (mBluetoothLeSanner != null)
             mBluetoothLeSanner.startScan(mScanCallback);
     }
     public void startScanning(Runnable run, long delayMillis) {
+        mScanning = true;
         mBluetoothLeSanner = mBluetoothAdapter.getBluetoothLeScanner();
         if (mBluetoothLeSanner != null) {
             mHandler.postDelayed(run, delayMillis);
@@ -118,6 +122,7 @@ public class BLEWrapper {
      * 停止搜索蓝牙设备
      */
     public void stopScanning() {
+        mScanning = false;
         mBluetoothLeSanner = mBluetoothAdapter.getBluetoothLeScanner();
         if (mBluetoothLeSanner != null) {
             mBluetoothLeSanner.stopScan(mScanCallback);
@@ -170,11 +175,13 @@ public class BLEWrapper {
     public boolean isConnected() {
         return mConnected;
     }
+    public boolean isScanning() { return mScanning; }
     /**
      * 请求读取characteristic的value，然后在onCharacteristicRead回调中处理读取到的value
      */
     public void requestCharacteristicValue(BluetoothGattCharacteristic gattChara) {
         if (mBluetoothAdapter == null || mBluetoothGatt == null) return;
+        mCallBack.uiOpenLoadingForReadOrWriteValue("reading: " + gattChara.getUuid());
         mBluetoothGatt.readCharacteristic(gattChara);
         Log.v("BLEWrapper", "requestChar");
     }
@@ -238,10 +245,12 @@ public class BLEWrapper {
         @Override
         public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
             super.onCharacteristicRead(gatt, characteristic, status);
+            mCallBack.uiCloseLoadingForReadOrWriteValue();
             if( status == BluetoothGatt.GATT_SUCCESS) {
                 //getCharacteristicValueFormat(characteristic);
                 if (gatt == null || characteristic == null || mBluetoothAdapter == null) return;
                 byte[] val = characteristic.getValue();
+
                 mCallBack.uiNewValueForCharacteristic(gatt, characteristic, val);
                 Log.v("BluetoothGattCallback", "onCharacteristicRead " + val.toString());
             }

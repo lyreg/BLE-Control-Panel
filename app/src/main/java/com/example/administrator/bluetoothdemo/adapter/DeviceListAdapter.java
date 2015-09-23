@@ -4,13 +4,17 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.le.ScanResult;
+import android.content.Intent;
 import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.administrator.bluetoothdemo.MainActivity;
+import com.example.administrator.bluetoothdemo.ServiceListActivity;
 import com.example.administrator.bluetoothdemo.wrapper.BLEWrapper;
 import com.example.administrator.bluetoothdemo.R;
 
@@ -24,9 +28,13 @@ public class DeviceListAdapter extends BaseAdapter {
 
     private List<ScanResult> scanResultList;
     private LayoutInflater mLayoutInflater;
+    private Activity mParent;
+    private BLEWrapper mBleWrapper;
 
-    public DeviceListAdapter(Activity parent, List<ScanResult> list) {
+    public DeviceListAdapter(Activity parent, BLEWrapper bleWrapper, List<ScanResult> list) {
+        mParent = parent;
         mLayoutInflater = parent.getLayoutInflater();
+        mBleWrapper = bleWrapper;
         if(list != null) {
             scanResultList = list;
         } else {
@@ -103,7 +111,7 @@ public class DeviceListAdapter extends BaseAdapter {
      */
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         ViewHolder mViewHolder = null;
         if(convertView == null) {
             convertView = mLayoutInflater.inflate(R.layout.device_scan_item, null);
@@ -112,6 +120,7 @@ public class DeviceListAdapter extends BaseAdapter {
             mViewHolder.deviceName = (TextView) convertView.findViewById(R.id.deviceName);
             mViewHolder.deviceAddress = (TextView) convertView.findViewById(R.id.deviceAddress);
             mViewHolder.deviceRssi = (TextView) convertView.findViewById(R.id.deviceRssi);
+            mViewHolder.connectBtn = (Button) convertView.findViewById(R.id.connect_button);
 
             convertView.setTag(mViewHolder);
         } else {
@@ -132,6 +141,23 @@ public class DeviceListAdapter extends BaseAdapter {
         mViewHolder.deviceAddress.setText(address);
         mViewHolder.deviceRssi.setText(rssiString);
 
+        mViewHolder.connectBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Intent intent = new Intent(mParent, ServiceListActivity.class);
+
+
+                if (mBleWrapper.isScanning()) {
+                    mParent.invalidateOptionsMenu();
+                    mBleWrapper.stopScanning();
+                }
+
+                intent.putExtra(ServiceListActivity.EXTRAS_DEVICE, (ScanResult) getItem(position));
+
+                mParent.startActivity(intent);
+            }
+        });
+
         return convertView;
     }
 
@@ -139,6 +165,7 @@ public class DeviceListAdapter extends BaseAdapter {
         public TextView deviceName;
         public TextView deviceAddress;
         public TextView deviceRssi;
+        public Button connectBtn;
     }
 
 }

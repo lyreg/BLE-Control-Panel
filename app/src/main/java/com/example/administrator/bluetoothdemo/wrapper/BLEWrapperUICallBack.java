@@ -18,6 +18,8 @@ public interface BLEWrapperUICallBack {
     public void uiDeviceDisconnected(BluetoothGatt bluetoothGatt, BluetoothDevice bluetoothDevice);
     public void uiServicesDiscovered(BluetoothGatt bluetoothGatt, BluetoothDevice bluetoothDevice, List<BluetoothGattService> services);
     public void uiNewValueForCharacteristic(BluetoothGatt bluetoothGatt, BluetoothGattCharacteristic ch, byte[] value);
+    public void uiOpenLoadingForReadOrWriteValue(String title);
+    public void uiCloseLoadingForReadOrWriteValue();
 
     public static class CallBack implements BLEWrapperUICallBack {
         @Override
@@ -41,6 +43,16 @@ public interface BLEWrapperUICallBack {
 
         @Override
         public void uiNewValueForCharacteristic(BluetoothGatt bluetoothGatt, BluetoothGattCharacteristic ch, byte[] value) {
+
+        }
+
+        @Override
+        public void uiOpenLoadingForReadOrWriteValue(String title) {
+
+        }
+
+        @Override
+        public void uiCloseLoadingForReadOrWriteValue() {
 
         }
     }

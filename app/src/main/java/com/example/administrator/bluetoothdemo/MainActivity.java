@@ -1,17 +1,17 @@
 package com.example.administrator.bluetoothdemo;
 
-import android.app.Activity;
 import android.bluetooth.le.ScanResult;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
@@ -19,8 +19,9 @@ import com.example.administrator.bluetoothdemo.adapter.DeviceListAdapter;
 import com.example.administrator.bluetoothdemo.wrapper.BLEWrapper;
 import com.example.administrator.bluetoothdemo.wrapper.BLEWrapperUICallBack;
 
-public class MainActivity extends Activity {
+public class MainActivity extends AppCompatActivity {
 
+    private Toolbar mToolbar;
     private boolean mScanning = false;
     private ListView mDeviceListView;
     private BLEWrapper mBLEWrapper;
@@ -31,7 +32,11 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        getActionBar().setTitle("BluetoothDemo");
+//        getActionBar().setTitle("BluetoothDemo");
+
+        mToolbar = (Toolbar) findViewById(R.id.activity_main_toolbar);
+        mToolbar.setTitle("BluetoothDemo");
+        setSupportActionBar(mToolbar);
         mDeviceListView = (ListView) findViewById(R.id.deviceListView);
 
         mHandler = new Handler();
@@ -64,10 +69,10 @@ public class MainActivity extends Activity {
 
         mBLEWrapper.initialize();
 
-        mDeviceListAdapter = new DeviceListAdapter(this, null);
+        mDeviceListAdapter = new DeviceListAdapter(this, mBLEWrapper, null);
         //setListAdapter(mDeviceListAdapter);
         mDeviceListView.setAdapter(mDeviceListAdapter);
-        mDeviceListView.setOnItemClickListener(onItemClickListener);
+//        mDeviceListView.setOnItemClickListener(onItemClickListener);
 
         mScanning = true;
         setScanningTimeOut();
