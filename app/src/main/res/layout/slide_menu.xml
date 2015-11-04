@@ -11,6 +11,7 @@
         android:text="Hello World!\nSlide Menu TextView"
         android:scrollbars="vertical"
         android:id="@+id/textView"
+        android:textColor="@color/indigo_primary_text"
         android:layout_above="@+id/button"
         android:layout_alignParentTop="true" />
 

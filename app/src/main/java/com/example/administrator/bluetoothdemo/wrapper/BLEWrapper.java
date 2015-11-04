@@ -21,7 +21,12 @@ import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
 
+import com.example.administrator.bluetoothdemo.util.BleNamesResolver;
+
+import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Locale;
+import java.util.UUID;
 
 /**
  * Created by Administrator on 2015/8/31.
@@ -43,6 +48,7 @@ public class BLEWrapper {
     private List<BluetoothGattService> mBluetoothGattServices = null;
     private boolean mConnected = false;
     private boolean mScanning;
+    private int mBondStatus;
 
     public BLEWrapper(Activity parent, BLEWrapperUICallBack callBack) {
         mActivity = parent;
@@ -172,10 +178,33 @@ public class BLEWrapper {
         mBluetoothGatt = null;
     }
 
-    public boolean isConnected() {
-        return mConnected;
+    public boolean createBond() {
+        if (mBluetoothGatt == null || mBluetoothDevice == null) return false;
+        return mBluetoothDevice.createBond();
     }
+    public boolean removeBond() {
+        try {
+            return removeBond(mBluetoothDevice.getClass(), mBluetoothDevice);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    public boolean removeBond(Class btClass, BluetoothDevice btDevice)
+            throws Exception {
+        Method removeBondMethod = btClass.getMethod("removeBond");
+        Boolean returnValue = (Boolean) removeBondMethod.invoke(btDevice);
+        return returnValue.booleanValue();
+    }
+
+    public boolean isConnected() { return mConnected; }
     public boolean isScanning() { return mScanning; }
+    public int isBonded() {
+        if (mBluetoothDevice == null || mBluetoothGatt == null) return BluetoothDevice.BOND_NONE;
+
+        mBondStatus = mBluetoothDevice.getBondState();
+        return mBondStatus;
+    }
     /**
      * 请求读取characteristic的value，然后在onCharacteristicRead回调中处理读取到的value
      */
@@ -184,6 +213,35 @@ public class BLEWrapper {
         mCallBack.uiOpenLoadingForReadOrWriteValue("reading: " + gattChara.getUuid());
         mBluetoothGatt.readCharacteristic(gattChara);
         Log.v("BLEWrapper", "requestChar");
+    }
+    /**
+     * 请求写入新的value，然后在onCharacteristicWrite回调中处理写入结果信息
+     */
+    public void writeDataToCharacteristic(BluetoothGattCharacteristic gattChara, byte[] dataToWrite) {
+        if(mBluetoothAdapter == null || mBluetoothGatt == null || gattChara == null) return;
+
+        // 首先给chara设置value
+        gattChara.setValue(dataToWrite);
+        // 然后‘commit’新的Characteristic给外围设备
+        mBluetoothGatt.writeCharacteristic(gattChara);
+    }
+
+    public void setNotificationForCharacteristic(BluetoothGattCharacteristic ch, boolean enabled) {
+        if(mBluetoothAdapter == null || mBluetoothGatt == null || ch == null) return;
+
+        boolean isSuccess = mBluetoothGatt.setCharacteristicNotification(ch, enabled);
+        if(!isSuccess) {
+            Log.e("------", "Seting proper notification status for characteristic failed!");
+        }
+
+        // This is also sometimes required (e.g. for heart rate monitors) to enable notifications/indications
+        // see: https://developer.bluetooth.org/gatt/descriptors/Pages/DescriptorViewer.aspx?u=org.bluetooth.descriptor.gatt.client_characteristic_configuration.xml
+        BluetoothGattDescriptor descriptor = ch.getDescriptor(UUID.fromString("00002902-0000-1000-8000-00805f9b34fb"));
+        if(descriptor != null) {
+            byte[] val = enabled ? BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE : BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE;
+            descriptor.setValue(val);
+            mBluetoothGatt.writeDescriptor(descriptor);
+        }
     }
 
     private BluetoothGattCallback mBluetoothGattCallback = new BluetoothGattCallback() {
@@ -246,6 +304,7 @@ public class BLEWrapper {
         public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
             super.onCharacteristicRead(gatt, characteristic, status);
             mCallBack.uiCloseLoadingForReadOrWriteValue();
+            Log.v("BluetoothGattCallback", "onCharacteristicRead " + status);
             if( status == BluetoothGatt.GATT_SUCCESS) {
                 //getCharacteristicValueFormat(characteristic);
                 if (gatt == null || characteristic == null || mBluetoothAdapter == null) return;
@@ -253,6 +312,10 @@ public class BLEWrapper {
 
                 mCallBack.uiNewValueForCharacteristic(gatt, characteristic, val);
                 Log.v("BluetoothGattCallback", "onCharacteristicRead " + val.toString());
+            } else if (status == BluetoothGatt.GATT_INSUFFICIENT_AUTHENTICATION) {
+                Log.v("BluetoothGattCallback", "onCharacteristicRead GATT_INSUFFICIENT_AUTHENTICATION"  );
+            } else if (status == BluetoothGatt.GATT_READ_NOT_PERMITTED) {
+                Log.v("BluetoothGattCallback", "onCharacteristicRead GATT_READ_NOT_PERMITTED");
             }
         }
 
@@ -274,6 +337,18 @@ public class BLEWrapper {
         @Override
         public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
             super.onCharacteristicWrite(gatt, characteristic, status);
+            String deviceName = gatt.getDevice().getName();
+            String serviceName = BleNamesResolver.resolveServiceName(characteristic.getService().getUuid().toString().toLowerCase(Locale.getDefault()));
+            String charName = BleNamesResolver.resolveCharacteristicName(characteristic.getUuid().toString().toLowerCase(Locale.getDefault()));
+            String descriptor = "Device: " + deviceName + " Service: " + serviceName + " Characteristic: " + charName;
+
+            if(status == BluetoothGatt.GATT_SUCCESS) {
+                Log.v("onCharacteristicWrite", "Write Successful!");
+                mCallBack.uiWriteValueSuccess(gatt, characteristic, descriptor);
+            } else {
+                Log.v("onCharacteristicWrite", "Write Failed!");
+                mCallBack.uiWriteValueFailed(gatt, characteristic, descriptor);
+            }
         }
 
         /**
@@ -285,6 +360,10 @@ public class BLEWrapper {
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
             super.onCharacteristicChanged(gatt, characteristic);
+
+            if (gatt == null || characteristic == null || mBluetoothAdapter == null) return;
+            byte[] val = characteristic.getValue();
+            mCallBack.uiNewValueForCharacteristic(gatt, characteristic, val);
         }
 
         /**

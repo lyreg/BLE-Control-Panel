@@ -12,6 +12,16 @@
         <!--Window color-->
         <item name="android:windowBackground">@color/indigo_icons</item>
 
+        <item name="android:textColorPrimary">@color/indigo_icons</item>
+
+        <item name="android:colorControlActivated">@color/teal_primary</item>
+        <item name="android:colorControlNormal">@color/teal_primary</item>
         <item name="android:navigationBarColor">@color/indigo_primary</item>
+
+        <item name="android:actionMenuTextAppearance">@style/MenuTextStyle</item>
+    </style>
+
+    <style name="MenuTextStyle" parent="TextAppearance.AppCompat">
+        <item name="android:textSize">16sp</item>
     </style>
 </resources>

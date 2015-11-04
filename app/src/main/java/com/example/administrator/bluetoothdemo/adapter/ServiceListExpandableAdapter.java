@@ -1,9 +1,11 @@
 package com.example.administrator.bluetoothdemo.adapter;
 
 import android.app.Activity;
-import android.bluetooth.BluetoothGatt;
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
+import android.content.DialogInterface;
+import android.support.design.widget.TextInputLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,12 +13,20 @@ import android.view.ViewGroup;
 import android.widget.Adapter;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.administrator.bluetoothdemo.util.BleNamesResolver;
 import com.example.administrator.bluetoothdemo.R;
+import com.example.administrator.bluetoothdemo.util.ByteUtil;
+import com.example.administrator.bluetoothdemo.util.CustomTextWatcher;
+import com.example.administrator.bluetoothdemo.view.TextInputAlertDialogBuilder;
 import com.example.administrator.bluetoothdemo.wrapper.BLEWrapper;
+
+import org.apache.http.auth.MalformedChallengeException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,6 +49,8 @@ public class ServiceListExpandableAdapter extends BaseExpandableListAdapter {
     // 用来记录switch按钮状态的Map
     private static List<Map<Integer, Boolean>> isCheckedList;
 
+    private static Map<String, CharItemBean> mCharItemList;
+
     private int mSelectedGroupPosition;
     private int mSelectedChildPosition;
     private BluetoothGattCharacteristic mSelectedChar;
@@ -52,6 +64,7 @@ public class ServiceListExpandableAdapter extends BaseExpandableListAdapter {
         mGattCharGroups = new ArrayList<List<BluetoothGattCharacteristic>>();
 
         isCheckedList = new ArrayList<Map<Integer, Boolean>>();
+        mCharItemList = new HashMap<String, CharItemBean>();
 
         mSelectedGroupPosition = mSelectedChildPosition = -1;
         mSelectedCharValue = "";
@@ -69,6 +82,9 @@ public class ServiceListExpandableAdapter extends BaseExpandableListAdapter {
         Map<Integer, Boolean> childChecked = new HashMap<Integer, Boolean>();
         for (int i = 0; i < gattCharacteristics.size(); i++) {
             childChecked.put(i, false);
+            BluetoothGattCharacteristic ch = gattCharacteristics.get(i);
+            String uuid = ch.getUuid().toString().toLowerCase(Locale.getDefault());
+            mCharItemList.put(uuid, new CharItemBean(uuid));
         }
         isCheckedList.add(childChecked);
     }
@@ -83,14 +99,21 @@ public class ServiceListExpandableAdapter extends BaseExpandableListAdapter {
         Log.v("ListAdapter", "newCharacteristicValueFomat " + mSelectedGroupPosition+ " "+ mSelectedChildPosition);
         mSelectedChar = ch;
 
+        String uuid = ch.getUuid().toString().toLowerCase(Locale.getDefault());
+
         if(rawValue != null && rawValue.length > 0) {
             StringBuilder str = new StringBuilder(rawValue.length);
             for(byte rawValueByte : rawValue) {
                 str.append(String.format("%02X", rawValueByte));
             }
             mSelectedCharValue = "0x" + str.toString();
+
+            mCharItemList.get(uuid).setValue(mSelectedCharValue);
+
         } else {
             mSelectedCharValue = "";
+
+            mCharItemList.get(uuid).setValue(mSelectedCharValue);
         }
     }
 
@@ -214,7 +237,7 @@ public class ServiceListExpandableAdapter extends BaseExpandableListAdapter {
         } else {
             mGroupViewHolder = (GroupViewHolder) convertView.getTag();
         }
-
+        Log.v("getGroupView", mGattServicesGroups.size() + " " + groupPosition);
         BluetoothGattService mGattService = mGattServicesGroups.get(groupPosition);
         String uuid = mGattService.getUuid().toString().toLowerCase(Locale.getDefault());
         String name = BleNamesResolver.resolveServiceName(uuid);
@@ -248,6 +271,13 @@ public class ServiceListExpandableAdapter extends BaseExpandableListAdapter {
     @Override
     public View getChildView(final int groupPosition, final int childPosition, final boolean isLastChild, View convertView, ViewGroup parent) {
         ChildViewHolder mChildViewHolder = null;
+
+        final BluetoothGattCharacteristic gattCharacteristic = mGattCharGroups.get(groupPosition).get(childPosition);
+        int props = gattCharacteristic.getProperties();
+        final String uuid = gattCharacteristic.getUuid().toString().toLowerCase(Locale.getDefault());
+        String name = BleNamesResolver.resolveCharacteristicName(uuid);
+        String propertiesString = BleNamesResolver.resolveProperties(props);
+
         if(convertView == null) {
             convertView = mLayoutInflater.inflate(R.layout.service_list_child_item, null);
             mChildViewHolder = new ChildViewHolder();
@@ -262,15 +292,18 @@ public class ServiceListExpandableAdapter extends BaseExpandableListAdapter {
             mChildViewHolder.charIndicateBtn = (Switch) convertView.findViewById(R.id.list_char_btn_indicate);
 
             convertView.setTag(R.id.tag_first, mChildViewHolder);
+            mChildViewHolder.charVal.setTag(uuid);
+
         } else {
             mChildViewHolder = (ChildViewHolder) convertView.getTag(R.id.tag_first);
+            mChildViewHolder.charVal.setTag(uuid);
         }
 
-        final BluetoothGattCharacteristic gattCharacteristic = mGattCharGroups.get(groupPosition).get(childPosition);
-        int props = gattCharacteristic.getProperties();
-        String uuid = gattCharacteristic.getUuid().toString().toLowerCase(Locale.getDefault());
-        String name = BleNamesResolver.resolveCharacteristicName(uuid);
-        String propertiesString = BleNamesResolver.resolveProperties(props);
+//        final BluetoothGattCharacteristic gattCharacteristic = mGattCharGroups.get(groupPosition).get(childPosition);
+//        int props = gattCharacteristic.getProperties();
+//        String uuid = gattCharacteristic.getUuid().toString().toLowerCase(Locale.getDefault());
+//        String name = BleNamesResolver.resolveCharacteristicName(uuid);
+//        String propertiesString = BleNamesResolver.resolveProperties(props);
 
         mChildViewHolder.charName.setText(name);
         mChildViewHolder.charUUID.setText(uuid);
@@ -310,35 +343,91 @@ public class ServiceListExpandableAdapter extends BaseExpandableListAdapter {
                 mBleWrapper.requestCharacteristicValue((BluetoothGattCharacteristic) getChild(groupPosition,childPosition));
             }
         });
-
-        if(isCheckedList.get(groupPosition).get(childPosition)) {
-            mChildViewHolder.charNotifyBtn.setChecked(true);
-        } else {
-            mChildViewHolder.charNotifyBtn.setChecked(false);
-        }
-
-        mChildViewHolder.charNotifyBtn.setOnClickListener(new View.OnClickListener() {
+        mChildViewHolder.charWriteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isCheckedList.get(groupPosition).get(childPosition)) {
-                    Log.v("checked", groupPosition + " " + childPosition + " true");
-                    isCheckedList.get(groupPosition).put(childPosition, false);
-                } else {
-                    Log.v("checked", groupPosition + " " + childPosition + " false");
-                    isCheckedList.get(groupPosition).put(childPosition, true);
-                }
+                TextInputAlertDialogBuilder mAlertDialogBuilder = new TextInputAlertDialogBuilder(mParent);
+
+                final TextInputLayout mTextInputLayout = (TextInputLayout) LayoutInflater.from(mParent).inflate(R.layout.dialog_inputtext_layout,null);
+                mTextInputLayout.setHint("请按16进制格式输入(0x开头):");
+                mTextInputLayout.getEditText().addTextChangedListener(new CustomTextWatcher(mTextInputLayout.getEditText()));
+
+                mAlertDialogBuilder.setTitle("Write New Value");
+                mAlertDialogBuilder.setView(mTextInputLayout);
+
+                mAlertDialogBuilder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        EditText editText = mTextInputLayout.getEditText();
+                        String newValue = editText.getText().toString().toLowerCase(Locale.getDefault());
+                        if(newValue != null && !newValue.equals("")) {
+                            byte[] dataToWrite = ByteUtil.parseHexStringToBytes(newValue);
+                            mBleWrapper.writeDataToCharacteristic((BluetoothGattCharacteristic) getChild(groupPosition,childPosition),dataToWrite);
+                        }
+
+                    }
+                });
+                mAlertDialogBuilder.setNegativeButton("取消", null);
+
+                mAlertDialogBuilder.show();
             }
         });
 
-        if(mSelectedGroupPosition == groupPosition && mSelectedChildPosition == childPosition) {
-            if(mSelectedCharValue != null && mSelectedChar != null) {
-                if(getChild(groupPosition,childPosition).equals(mSelectedChar)) {
-                    mChildViewHolder.charVal.setText(mSelectedCharValue);
-                }
+//        if(isCheckedList.get(groupPosition).get(childPosition)) {
+//            mChildViewHolder.charNotifyBtn.setChecked(true);
+//        } else {
+//            mChildViewHolder.charNotifyBtn.setChecked(false);
+//        }
+
+//        mChildViewHolder.charNotifyBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (isCheckedList.get(groupPosition).get(childPosition)) {
+//                    Log.v("checked", groupPosition + " " + childPosition + " true");
+//                    isCheckedList.get(groupPosition).put(childPosition, false);
+//                } else {
+//                    Log.v("checked", groupPosition + " " + childPosition + " false");
+//                    isCheckedList.get(groupPosition).put(childPosition, true);
+//                }
+//
+//            }
+//        });
+        mChildViewHolder.charNotifyBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                mSelectedGroupPosition = groupPosition;
+                mSelectedChildPosition = childPosition;
+
+                mCharItemList.get(uuid).setIsCheckedN(isChecked);
+
+                mBleWrapper.setNotificationForCharacteristic(gattCharacteristic, isChecked);
             }
-        } else {
-            mChildViewHolder.charVal.setText("");
-        }
+        });
+
+        mChildViewHolder.charIndicateBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                mCharItemList.get(uuid).setIsCheckedI(isChecked);
+
+            }
+        });
+
+//        if(mSelectedGroupPosition == groupPosition && mSelectedChildPosition == childPosition) {
+//            if(mSelectedCharValue != null && mSelectedChar != null) {
+//                if(getChild(groupPosition,childPosition).equals(mSelectedChar)) {
+//                    mChildViewHolder.charVal.setText(mSelectedCharValue);
+//                }
+//            }
+//        } else {
+//            mChildViewHolder.charVal.setText("");
+//        }
+        String charVal = mCharItemList.get(uuid).getValue();
+        boolean isCheckedN = mCharItemList.get(uuid).isCheckedN();
+        boolean isCheckedI = mCharItemList.get(uuid).isCheckedI();
+        mChildViewHolder.charVal.setText(charVal);
+        mChildViewHolder.charNotifyBtn.setChecked(isCheckedN);
+        mChildViewHolder.charIndicateBtn.setChecked(isCheckedI);
 
         return convertView;
     }

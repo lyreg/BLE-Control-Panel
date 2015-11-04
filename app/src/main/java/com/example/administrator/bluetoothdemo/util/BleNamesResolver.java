@@ -134,6 +134,20 @@ public class BleNamesResolver {
         mServices.put("00001813-0000-1000-8000-00805f9b34fb", "Scan Parameters");
         mServices.put("00001804-0000-1000-8000-00805f9b34fb", "Tx Power");
 
+
+        mServices.put("93321001-39af-11e5-a3f1-0002a5d5c51b", "Car Management");
+        mCharacteristics.put("93322a01-39af-11e5-a3f1-0002a5d5c51b", "Device Authentication");
+        mCharacteristics.put("93322a02-39af-11e5-a3f1-0002a5d5c51b", "Device ID");
+        mCharacteristics.put("93322a03-39af-11e5-a3f1-0002a5d5c51b", "Car Model");
+        mCharacteristics.put("93322a04-39af-11e5-a3f1-0002a5d5c51b", "Door Control Point");
+        mCharacteristics.put("93322a05-39af-11e5-a3f1-0002a5d5c51b", "Light And Wipe Control Point");
+        mCharacteristics.put("93322a06-39af-11e5-a3f1-0002a5d5c51b", "Find Car Control Point");
+        mCharacteristics.put("93322a07-39af-11e5-a3f1-0002a5d5c51b", "Door Monitoring");
+        mCharacteristics.put("93322a08-39af-11e5-a3f1-0002a5d5c51b", "Tire Monitoring");
+        mCharacteristics.put("93322a09-39af-11e5-a3f1-0002a5d5c51b", "TPMS Threshold");
+        mCharacteristics.put("93322a0a-39af-11e5-a3f1-0002a5d5c51b", "DTC Control Point");
+
+
         mCharacteristics.put("00002a43-0000-1000-8000-00805f9b34fb", "Alert Category ID");
         mCharacteristics.put("00002a42-0000-1000-8000-00805f9b34fb", "Alert Category ID Bit Mask");
         mCharacteristics.put("00002a06-0000-1000-8000-00805f9b34fb", "Alert Level");

@@ -1,9 +1,10 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
+    android:background="@color/background_grey"
     android:orientation="vertical"
     tools:context=".MainActivity">
 
@@ -16,9 +17,10 @@
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/corner_bg_white"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:divider="#000000"
         android:padding="3dp"
-        android:elevation="3dp"
         android:id="@+id/deviceListView"
         android:layout_weight="1" />
 

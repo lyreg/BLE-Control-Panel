@@ -20,6 +20,8 @@ public interface BLEWrapperUICallBack {
     public void uiNewValueForCharacteristic(BluetoothGatt bluetoothGatt, BluetoothGattCharacteristic ch, byte[] value);
     public void uiOpenLoadingForReadOrWriteValue(String title);
     public void uiCloseLoadingForReadOrWriteValue();
+    public void uiWriteValueSuccess(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, String descriptor);
+    public void uiWriteValueFailed(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, String descriptor);
 
     public static class CallBack implements BLEWrapperUICallBack {
         @Override
@@ -53,6 +55,16 @@ public interface BLEWrapperUICallBack {
 
         @Override
         public void uiCloseLoadingForReadOrWriteValue() {
+
+        }
+
+        @Override
+        public void uiWriteValueSuccess(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, String descriptor) {
+
+        }
+
+        @Override
+        public void uiWriteValueFailed(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, String descriptor) {
 
         }
     }

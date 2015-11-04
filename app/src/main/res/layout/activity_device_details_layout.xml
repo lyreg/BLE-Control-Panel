@@ -3,35 +3,34 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/device_details"
     android:layout_width="match_parent"
-    android:layout_height="156dp"
+    android:layout_height="wrap_content"
     android:layout_below="@+id/toolbar"
     android:background="?attr/colorPrimary"
     android:alpha="1"
-    android:paddingLeft="32dp"
-    android:paddingTop="16dp" >
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="8dp">
-        <!--<TextView-->
+    android:padding="8dp">
+    <!--<TableRow-->
         <!--android:layout_width="match_parent"-->
         <!--android:layout_height="wrap_content"-->
-        <!--android:layout_weight="1"-->
-        <!--android:gravity="end"-->
-        <!--android:text="Device:"-->
-        <!--android:textSize="18dp"-->
-        <!--android:textColor="@color/indigo_primary_text"-->
-        <!--android:id="@+id/labelForName"/>-->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="99"
-            android:layout_span="2"
-            android:text=""
-            android:textSize="24dp"
-            android:textColor="@color/indigo_icons"
-            android:id="@+id/servicelist_deviceName"/>
-    </TableRow>
+        <!--android:paddingLeft="8dp">-->
+        <!--&lt;!&ndash;<TextView&ndash;&gt;-->
+        <!--&lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:layout_weight="1"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:gravity="end"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:text="Device:"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:textSize="18dp"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:textColor="@color/indigo_primary_text"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:id="@+id/labelForName"/>&ndash;&gt;-->
+        <!--<TextView-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="99"-->
+            <!--android:layout_span="2"-->
+            <!--android:text=""-->
+            <!--android:textSize="24dp"-->
+            <!--android:textColor="@color/indigo_icons"-->
+            <!--android:id="@+id/servicelist_deviceName"/>-->
+    <!--</TableRow>-->
     <TableRow
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -50,6 +49,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="99"
+            android:layout_span="3"
             android:paddingLeft="8dp"
             android:text=""
             android:textSize="16dp"
@@ -75,6 +75,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="99"
+            android:layout_span="3"
             android:paddingLeft="8dp"
             android:text=""
             android:textSize="16dp"
@@ -99,13 +100,61 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="99"
+            android:layout_weight="49"
             android:paddingLeft="8dp"
             android:text=""
             android:textSize="16dp"
             android:textStyle="italic"
             android:textColor="@color/indigo_divider"
             android:id="@+id/servicelist_deviceStatus"/>
+
+        <!--<TextView-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="1"-->
+            <!--android:gravity="end"-->
+            <!--android:text="BondState:"-->
+            <!--android:textSize="16dp"-->
+            <!--android:textStyle="italic"-->
+            <!--android:textColor="@color/indigo_divider"-->
+            <!--android:id="@+id/labelForBondState"/>-->
+        <!--<TextView-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="49"-->
+            <!--android:paddingLeft="8dp"-->
+            <!--android:text=""-->
+            <!--android:textSize="16dp"-->
+            <!--android:textStyle="italic"-->
+            <!--android:textColor="@color/indigo_divider"-->
+            <!--android:id="@+id/servicelist_deviceBondState"/>-->
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="8dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:text="BondState:"
+            android:textSize="16dp"
+            android:textStyle="italic"
+            android:textColor="@color/indigo_divider"
+            android:id="@+id/labelForBondState"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="49"
+            android:paddingLeft="8dp"
+            android:text=""
+            android:textSize="16dp"
+            android:textStyle="italic"
+            android:textColor="@color/indigo_divider"
+            android:id="@+id/servicelist_deviceBondState"/>
     </TableRow>
 
 </TableLayout>

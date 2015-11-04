@@ -19,4 +19,9 @@
         android:title="disconnect"
         android:orderInCategory="4"
         app:showAsAction="always" />
+    <item
+        android:id="@+id/action_bond"
+        android:title="Bond"
+        android:orderInCategory="100"
+        app:showAsAction="never" />
 </menu>

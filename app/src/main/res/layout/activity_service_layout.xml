@@ -1,11 +1,9 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:lyreg="http://schemas.android.com/apk/res/com.example.administrator.bluetoothdemo"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_grey"
     android:orientation="vertical"
     tools:context="com.example.administrator.bluetoothdemo.ServiceListActivity"
     tools:ignore="ResAuto">
@@ -37,19 +35,12 @@
                 android:orientation="vertical"
                 android:background="@color/background_grey">
 
-
                 <ExpandableListView
+                    android:id="@+id/serviceListView"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:headerDividersEnabled="true"
-
-                    android:dividerHeight="2dp"
-                    android:background="#f4f4f4"
-                    android:childDivider="#00000000"
-                    android:cacheColorHint="#00000000"
-                    android:scrollbarSize="0dp"
-                    android:divider="#00000000"
-                    android:id="@+id/serviceListView"/>
+                    android:dividerHeight="0.01dp"
+                    android:childDivider="@color/indigo_secondary_text"/>
                 </LinearLayout>
         </LinearLayout>
     </com.example.administrator.bluetoothdemo.view.SlideMenuView>

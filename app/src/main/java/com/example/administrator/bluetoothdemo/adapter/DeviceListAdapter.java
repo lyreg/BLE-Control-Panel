@@ -121,6 +121,7 @@ public class DeviceListAdapter extends BaseAdapter {
             mViewHolder.deviceAddress = (TextView) convertView.findViewById(R.id.deviceAddress);
             mViewHolder.deviceRssi = (TextView) convertView.findViewById(R.id.deviceRssi);
             mViewHolder.connectBtn = (Button) convertView.findViewById(R.id.connect_button);
+            mViewHolder.deviceBond = (TextView) convertView.findViewById(R.id.deviceBond);
 
             convertView.setTag(mViewHolder);
         } else {
@@ -130,16 +131,22 @@ public class DeviceListAdapter extends BaseAdapter {
         ScanResult result = scanResultList.get(position);
         BluetoothDevice device = result.getDevice();
         int rssi = result.getRssi();
+        int bondState = result.getDevice().getBondState();
 
         String name = device.getName();
         String address = device.getAddress();
         String rssiString = (rssi == 0) ? "N/A" : rssi + " db";
+        String bondStateString = "NOT BOND";
+
+        if(bondState == BluetoothDevice.BOND_BONDED) bondStateString = "BONDED";
+        if(bondState == BluetoothDevice.BOND_BONDING) bondStateString = "BONDING";
 
         if(name == null || name.length() <= 0) name = "Unknown Device";
 
         mViewHolder.deviceName.setText(name);
         mViewHolder.deviceAddress.setText(address);
         mViewHolder.deviceRssi.setText(rssiString);
+        mViewHolder.deviceBond.setText(bondStateString);
 
         mViewHolder.connectBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -166,6 +173,7 @@ public class DeviceListAdapter extends BaseAdapter {
         public TextView deviceAddress;
         public TextView deviceRssi;
         public Button connectBtn;
+        public TextView deviceBond;
     }
 
 }
